@@ -16,6 +16,9 @@ mongoose.connect(process.env.MONGODB_URI);
 const userRoutes = require("./routes/user");
 app.use(userRoutes);
 
+const Fav = require("../marvel-backend/models/Fav");
+const Comment = require("./models/Comment");
+
 app.get("/", (req, res) => {
   try {
     res.json("Test route");
@@ -85,6 +88,75 @@ app.get("/comics", async (req, res) => {
     // console.log(response.data);
 
     res.json(response.data);
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.post("/addfavourites", async (req, res) => {
+  try {
+    const { name, image } = req.body;
+    const newFav = new Fav({
+      name: name,
+      image: image,
+    });
+    await newFav.save();
+    const clientRes = {
+      name: newFav.name,
+      image: newFav.image,
+    };
+    res.json(clientRes);
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.get("/favourites", async (req, res) => {
+  try {
+    const favourites = await Fav.find();
+    res.json({ favourites: favourites });
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.delete("/favourites/delete/:id", async (req, res) => {
+  try {
+    favToDelete = await Fav.findById(req.params.id);
+    await favToDelete.delete();
+    res.status(200).json("Favourite succesfully deleted !");
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.post("/favourites/comments", async (req, res) => {
+  try {
+    const { name, comment } = req.body;
+    const newComment = new Comment({
+      name: name,
+      comment: comment,
+    });
+    await newComment.save();
+    const clientRes = {
+      name: newComment.name,
+      comment: newComment.comment,
+    };
+    res.json(clientRes);
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.get("/comments", async (req, res) => {
+  try {
+    const comments = await Comment.find();
+    res.json({ comments: comments });
   } catch (error) {
     console.log(error.message);
     res.status(400).json({ message: error.message });
