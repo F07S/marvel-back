@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGODB_URI);
 const userRoutes = require("./routes/user");
 app.use(userRoutes);
 
-const Fav = require("../marvel-backend/models/Fav");
+const Fav = require("./models/Fav");
 const Comment = require("./models/Comment");
 
 app.get("/", (req, res) => {
