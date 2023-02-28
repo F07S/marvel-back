@@ -6,10 +6,7 @@ const Comment = mongoose.model("Comment", {
     type: String,
   },
 
-  comment: {
-    required: true,
-    type: String,
-  },
+  comment: String,
 });
 
 module.exports = Comment;

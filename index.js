@@ -127,7 +127,8 @@ app.delete("/favourites/delete/:id", async (req, res) => {
   try {
     favToDelete = await Fav.findById(req.params.id);
     await favToDelete.delete();
-    res.status(200).json("Favourite succesfully deleted !");
+    const favourites = await Fav.find();
+    res.status(200).json({ favourites: favourites });
   } catch (error) {
     console.log(error.message);
     res.status(400).json({ message: error.message });
@@ -142,11 +143,14 @@ app.post("/favourites/comments", async (req, res) => {
       comment: comment,
     });
     await newComment.save();
-    const clientRes = {
-      name: newComment.name,
-      comment: newComment.comment,
-    };
-    res.json(clientRes);
+    // const clientRes = {
+    //   name: newComment.name,
+    //   comment: newComment.comment,
+    //   id: newComment._id,
+    // };
+    // res.json(clientRes);
+    const comments = await Comment.find();
+    res.json({ comments: comments });
   } catch (error) {
     console.log(error.message);
     res.status(400).json({ message: error.message });
